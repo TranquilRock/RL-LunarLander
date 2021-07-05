@@ -13,7 +13,7 @@ from pyvirtualdisplay import Display
 import matplotlib.pyplot as plt
 
 from IPython import display
-% % capture
+%% capture
 virtual_display = Display(visible=0, size=(1400, 900))
 virtual_display.start()
 
@@ -34,7 +34,7 @@ def fix(env, seed):
     torch.backends.cudnn.deterministic = True
 
 
-% % capture
+%% capture
 
 env = gym.make('LunarLander-v2')
 
