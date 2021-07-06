@@ -76,7 +76,6 @@ for batch in progress_bar:
     if batch % 100 == 0:
         saveLandingVideo(f"Training.mp4", env=gym.make(
             'LunarLander-v2'), actions=GenerateAction(env, agent, NUM_OF_TEST=1,quite = True)[0])
-        exit()
 end = time.time()
 print(f"Total training time is {end-start} sec")
 plt.plot(avg_total_rewards)

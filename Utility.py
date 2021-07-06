@@ -29,8 +29,6 @@ class PolicyGradientNetwork(nn.Module):
 
     def forward(self, state):
         x = self.fc1(state)
-        # print(x.shape)
-        # print(x)
         return self.last(x)
 
 
