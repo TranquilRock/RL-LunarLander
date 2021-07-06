@@ -25,7 +25,7 @@ class PolicyGradientNetwork(nn.Module):
             nn.Tanh(),
             nn.Linear(8, 4),
         )
-        self.last = nn.Softmax(dim = -1)
+        self.last = nn.Softmax(dim=-1)
 
     def forward(self, state):
         x = self.fc1(state)
