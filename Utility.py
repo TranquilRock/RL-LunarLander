@@ -28,7 +28,10 @@ class PolicyGradientNetwork(nn.Module):
         self.last = nn.Softmax()
 
     def forward(self, state):
-        return self.last(self.fc1(state))
+        x = self.fc1(state)
+        print(x.shape)
+        print(x)
+        return self.last(x)
 
 
 class PolicyGradientAgent():
@@ -99,7 +102,6 @@ def GenerateAction(env, agent, NUM_OF_TEST=5, quite=False):
             actions.append(action)
             state, reward, done, _ = env.step(action)
             total_reward += reward
-        print(total_reward)
         test_total_reward.append(total_reward)
         action_list.append(actions)
     distribution = {}
