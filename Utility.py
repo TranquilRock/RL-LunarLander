@@ -26,6 +26,7 @@ class PolicyGradientNetwork(nn.Module):
             nn.Linear(8, 4),
         )
         self.last = nn.Softmax()
+
     def forward(self, state):
         return self.last(self.fc1(state))
 
@@ -84,7 +85,7 @@ def TestAction(env, agent, actions_list):
     return total_reward
 
 
-def GenerateAction(env, agent, NUM_OF_TEST=5):
+def GenerateAction(env, agent, NUM_OF_TEST=5, quiet=False):
     agent.network.eval()
     test_total_reward = []
     action_list = []
@@ -101,7 +102,6 @@ def GenerateAction(env, agent, NUM_OF_TEST=5):
         print(total_reward)
         test_total_reward.append(total_reward)
         action_list.append(actions)
-        print("length of actions is ", len(actions))
     distribution = {}
     for actions in action_list:
         for action in actions:
@@ -109,7 +109,8 @@ def GenerateAction(env, agent, NUM_OF_TEST=5):
                 distribution[action] = 1
             else:
                 distribution[action] += 1
-    print(f"Final reward is : %.2f" % np.mean(test_total_reward))
-    print("Action list's distribution: ", distribution)
-    np.save("Action_List_test.npy", np.array(action_list))
+    if not quiet:
+        print(f"Final reward is : %.2f" % np.mean(test_total_reward))
+        print("Action list's distribution: ", distribution)
+        np.save("Action_List_test.npy", np.array(action_list))
     return action_list
