@@ -85,7 +85,7 @@ def TestAction(env, agent, actions_list):
     return total_reward
 
 
-def GenerateAction(env, agent, NUM_OF_TEST=5, quiet=False):
+def GenerateAction(env, agent, NUM_OF_TEST=5, quite=False):
     agent.network.eval()
     test_total_reward = []
     action_list = []
@@ -109,7 +109,7 @@ def GenerateAction(env, agent, NUM_OF_TEST=5, quiet=False):
                 distribution[action] = 1
             else:
                 distribution[action] += 1
-    if not quiet:
+    if not quite:
         print(f"Final reward is : %.2f" % np.mean(test_total_reward))
         print("Action list's distribution: ", distribution)
         np.save("Action_List_test.npy", np.array(action_list))

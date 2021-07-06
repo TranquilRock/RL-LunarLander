@@ -74,9 +74,8 @@ for batch in progress_bar:
         (np.std(rewards) + 1e-9)  # Normalisze Reward
     agent.learn(torch.stack(log_probs), torch.from_numpy(rewards))
     if batch % 100 == 0:
-
         saveLandingVideo(f"Training.mp4", env=gym.make(
-            'LunarLander-v2'), actions=GenerateAction(env, agent, NUM_OF_TEST=1)[0])
+            'LunarLander-v2'), actions=GenerateAction(env, agent, NUM_OF_TEST=1,quite = True)[0])
 end = time.time()
 print(f"Total training time is {end-start} sec")
 plt.plot(avg_total_rewards)
