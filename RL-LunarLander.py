@@ -1,4 +1,5 @@
 from pyvirtualdisplay import Display
+from IPython import display
 import time
 import random
 import gym
@@ -12,7 +13,6 @@ import torch.nn as nn
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
-from IPython import display
 from SaveLandingVideo import saveLandingVideo
 from SetSeed import *
 from Utility import *
@@ -38,7 +38,7 @@ agent = PolicyGradientAgent(network)
 agent.network.train()
 
 EPISODE_PER_BATCH = 5
-NUM_BATCH = 400
+NUM_BATCH = 10000
 
 avg_total_rewards, avg_final_rewards = [], []
 progress_bar = tqdm(range(NUM_BATCH))
@@ -73,7 +73,7 @@ for batch in progress_bar:
     rewards = (rewards - np.mean(rewards)) / \
         (np.std(rewards) + 1e-9)  # Normalisze Reward
     agent.learn(torch.stack(log_probs), torch.from_numpy(rewards))
-    if batch % 100 == 0:
+    if batch % 1000 == 0:
         saveLandingVideo(f"Training.mp4", env=gym.make(
             'LunarLander-v2'), actions=GenerateAction(env, agent, NUM_OF_TEST=1, quite=True)[0])
 end = time.time()
