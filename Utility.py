@@ -25,13 +25,13 @@ class PolicyGradientNetwork(nn.Module):
             nn.Tanh(),
             nn.Linear(8, 4),
         )
-        self.last = nn.Softmax()
+        self.last = nn.Softmax(dim = -1)
 
     def forward(self, state):
         x = self.fc1(state)
         # print(x.shape)
         # print(x)
-        return self.last(x,dim = 0)
+        return self.last(x)
 
 
 class PolicyGradientAgent():
