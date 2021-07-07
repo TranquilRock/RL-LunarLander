@@ -1,4 +1,3 @@
-from numpy.core.fromnumeric import swapaxes
 from pyvirtualdisplay import Display
 from IPython import display
 import gym
@@ -37,44 +36,43 @@ print("Initial State: ", initial_state)
 start = time.time()
 
 network = PolicyGradientNetwork()
-agent = PolicyGradientAgent(network,lr = 1e-3)
+agent = PolicyGradientAgent(network, lr=1e-4)
 agent.network.train()
 
 EPISODE_PER_BATCH = 10
-NUM_BATCH = 1000
-Gamma = 0.9
+NUM_BATCH = 10000
+Gamma = 0.6
 avg_total_rewards, avg_final_rewards = [], []
-progress_bar = tqdm(range(NUM_BATCH))
+progress_bar = tqdm(range(1, NUM_BATCH+1))
 for batch in progress_bar:
     log_probs, rewards = [], []
     total_rewards, final_rewards = [], []
     for episode in range(EPISODE_PER_BATCH):
         state = env.reset()
-        total_reward, total_step = 0, 0
+        total_reward = 0
         seq_rewards = []
         reward = 0.0
         done = False
         while not done:
             action, log_prob = agent.sample(state)  # at , log(at|st)
-            next_state, reward, done, _ = env.step(action)
+            state, reward, done, _ = env.step(action)
             # [log(a1|s1), log(a2|s2), ...., log(at|st)]
             log_probs.append(log_prob)
             seq_rewards.append(reward)
-            state = next_state
             total_reward += reward
-            total_step += 1
         for i in range(len(seq_rewards) - 2, -1, -1):
             seq_rewards[i] += Gamma * seq_rewards[i+1]
         rewards.extend(seq_rewards)
-        final_rewards.append(reward)
-        total_rewards.append(total_reward)
-    avg_total_reward = sum(total_rewards) / len(total_rewards)
-    avg_final_reward = sum(final_rewards) / len(final_rewards)
-    avg_total_rewards.append(avg_total_reward)
-    avg_final_rewards.append(avg_final_reward)
+        final_rewards.append(reward)  # used to plot
+        total_rewards.append(total_reward)  # used to plot
+    avg_total_reward = sum(total_rewards) / len(total_rewards)  # used to plot
+    avg_final_reward = sum(final_rewards) / len(final_rewards)  # used to plot
+    avg_total_rewards.append(avg_total_reward)  # used to plot
+    avg_final_rewards.append(avg_final_reward)  # used to plot
     progress_bar.set_description(
         f"Total: {avg_total_reward: 4.1f}, Final: {avg_final_reward: 4.1f}")
-    rewards = (rewards - np.mean(rewards))#/(np.std(rewards) + 1e-9)  # Normalisze Reward
+    # /(np.std(rewards) + 1e-9)  # Normalisze Reward
+    rewards = (rewards - np.mean(rewards))
     agent.learn(torch.stack(log_probs), torch.from_numpy(rewards))
     if batch % 1000 == 0:
         saveLandingVideo(f"Training.mp4", env=gym.make(
