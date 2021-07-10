@@ -2,9 +2,7 @@ import gym
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 
-
 def saveLandingVideo(Name, env, Agent):  # Save an episode's video
-    env = gym.make('LunarLander-v2')
     env.reset()
     fig, ax = plt.subplots()
     imgs = []

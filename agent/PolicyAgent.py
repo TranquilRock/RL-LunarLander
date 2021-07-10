@@ -5,15 +5,11 @@ import torch.optim as optim
 from torch.distributions import Categorical
 
 # Input 8-dim obeseravtion, output an action out of four choices.
-
-
 class PolicyGradientNetwork(nn.Module):
     def __init__(self):
         super().__init__()
         self.fc1 = nn.Sequential(
             nn.Linear(8, 16),
-            nn.Tanh(),
-            nn.Linear(16, 16),
             nn.Tanh(),
             nn.Linear(16, 16),
             nn.Tanh(),

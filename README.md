@@ -1,6 +1,6 @@
 # RL-LunarLander
 NTUEE ML2020-2021 spring course 
-- This code can't be accelerated using GPU, CPU run even faster.
+- Some of the code are done by TA or online resources.
 - step() returns：
     - observation / state
     - reward
