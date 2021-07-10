@@ -52,10 +52,9 @@ def main(argv):
     targetNet.eval()
     if "-l" in argv:
         policyQAgent.load(sourcePath + "Qmodel.ckpt")
-    memory = ReplayMemory(30000)
-
+    memory = ReplayMemory(300000)
     #=====================================Training ============================
-    num_episodes = 10000
+    num_episodes = 100000
     progressBar = tqdm(range(num_episodes))
     for i_episode in progressBar:
         currentState = env.reset()
@@ -70,7 +69,6 @@ def main(argv):
             else:
                 plt.imshow(env.render(mode='rgb_array'),
                         interpolation='none')
-                # plt.pause(0.001)  # pause a bit so that plots are updated
             nextState = torch.tensor(nextState).view(1, 8)
             reward = torch.tensor([reward], device=device)
             if done:

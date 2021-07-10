@@ -7,17 +7,18 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.distributions import Categorical
 
-
 class DQN(nn.Module):
     def __init__(self, nState, nAction, device="cuda"):
         super().__init__()
         self.fc1 = nn.Sequential(
             nn.Linear(nState, 16),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(16, 16),
-            nn.Tanh(),
+            nn.ReLU(),
+            nn.Linear(16, 16),
+            nn.ReLU(),
             nn.Linear(16, 8),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(8, nAction),
         )
         self.last = nn.Softmax(dim=-1)
@@ -65,9 +66,8 @@ class QAgent():
             non_final_next_states).max(1)[0].detach()
         
         # Compute the expected Q values
-        expected_state_action_values = (
-            next_state_values * self.GAMMA) + reward_batch
-        expected_state_action_values = expected_state_action_values.float()
+        expected_state_action_values = ((
+            next_state_values * self.GAMMA) + reward_batch).float()
         
         # Compute Huber loss
         criterion = nn.SmoothL1Loss()
@@ -77,7 +77,7 @@ class QAgent():
         self.optimizer.zero_grad()
         loss.backward()
         for param in self.network.parameters():
-            param.grad.data.clamp_(-1, 1)
+            param.grad.data.clamp_(-10, 10)
         self.optimizer.step()
 
     def sample(self, state):
