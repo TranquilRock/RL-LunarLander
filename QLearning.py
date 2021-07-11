@@ -56,7 +56,7 @@ def main(argv):
     #=====================================Training ============================
     num_episodes = 100000
     progressBar = tqdm(range(num_episodes))
-    for i_episode in progressBar:
+    for i in progressBar:
         currentState = env.reset()
         currentState = torch.tensor(currentState).view(1, 8)
         totalReward = []
@@ -79,13 +79,15 @@ def main(argv):
             if len(memory) >= policyQAgent.BATCH_SIZE:
                 transitions = memory.sample(policyQAgent.BATCH_SIZE)
                 batch = Transition(*zip(*transitions))
+                print(batch.shape)
+                exit()
                 policyQAgent.learn(batch,targetNet)
             
             totalReward.append(reward.item())
             if done:
                 finalReward = reward.item()
                 break
-        if i_episode % TARGET_UPDATE == 0:
+        if i % TARGET_UPDATE == 0:
             targetNet.load_state_dict(policyQAgent.network.state_dict())
         policyQAgent.save(sourcePath + "Qmodel.ckpt")
         progressBar.set_description(
