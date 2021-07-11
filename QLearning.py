@@ -79,8 +79,6 @@ def main(argv):
             if len(memory) >= policyQAgent.BATCH_SIZE:
                 transitions = memory.sample(policyQAgent.BATCH_SIZE)
                 batch = Transition(*zip(*transitions))
-                print(batch)
-                exit()
                 policyQAgent.learn(batch,targetNet)
             
             totalReward.append(reward.item())
