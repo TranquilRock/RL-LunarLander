@@ -19,13 +19,13 @@ class DQN(nn.Module):
             nn.ReLU(),
             nn.Linear(16, nAction),
         )
-        self.last = nn.Softmax(dim=-1)
+        # self.last = nn.Softmax(dim=-1)
         self.device = device
 
     def forward(self, x):  # Return expected value of each action
         x = torch.FloatTensor(x).to(self.device)
         x = self.fc1(x)
-        x = self.last(x)
+        # x = self.last(x)
         return x
 
 
