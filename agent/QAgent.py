@@ -12,13 +12,13 @@ class DQN(nn.Module):
         super().__init__()
         self.fc1 = nn.Sequential(
             nn.Linear(nState, 16),
-            nn.ReLU(),
-            nn.Linear(16, 16),
-            nn.ReLU(),
-            nn.Linear(16, 16),
+            nn.LeakyReLU(0.1),
+            nn.Linear(16, 128),
+            nn.Sigmoid(),
+            nn.Linear(128, 16),
             nn.ReLU(),
             nn.Linear(16, 8),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Linear(8, nAction),
         )
         self.last = nn.Softmax(dim=-1)
