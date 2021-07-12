@@ -52,9 +52,9 @@ def main(argv):
     targetNet.eval()
     if "-l" in argv:
         policyQAgent.load(sourcePath + "Qmodel.ckpt")
-    memory = ReplayMemory(300000)
+    memory = ReplayMemory(30000)
     #=====================================Training ============================
-    num_episodes = 100000
+    num_episodes = 10000
     progressBar = tqdm(range(num_episodes))
     for i in progressBar:
         currentState = env.reset()

@@ -11,7 +11,9 @@ class DQN(nn.Module):
     def __init__(self, nState, nAction, device="cuda"):
         super().__init__()
         self.fc1 = nn.Sequential(
-            nn.Linear(nState, 128),
+            nn.Linear(nState, 32),
+            nn.ReLU(),
+            nn.Linear(32, 128),
             nn.LeakyReLU(0.1),
             nn.Linear(128, 128),
             nn.LeakyReLU(0.1),
