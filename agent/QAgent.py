@@ -86,7 +86,8 @@ class QAgent():
 
     def sample(self, state):
         state = torch.tensor(state).view(1, 8)
-        return (self.select_action(state=state, isTesting=True),None) # To meet format
+        # To meet format
+        return (self.select_action(state=state, isTesting=True).item(), None)
 
     def select_action(self, state, isTesting=False):
         sample = random.random()
