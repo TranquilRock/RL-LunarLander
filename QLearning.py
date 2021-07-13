@@ -81,7 +81,7 @@ def main(argv):
             batch = Transition(*zip(*transitions))
             policyQAgent.learn(batch, targetNet)
 
-            totalReward = totalReward*QAgent.GAMMA + (reward.item())
+            totalReward = totalReward*policyQAgent.GAMMA + (reward.item())
             if done:
                 finalReward = reward.item()
                 break
