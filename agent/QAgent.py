@@ -40,8 +40,8 @@ class QAgent():
             self.network.parameters(), **optimizerConfig)
         self.device = device
         self.EPS_START = 0.9
-        self.EPS_END = 0.05
-        self.EPS_DECAY = 200
+        self.EPS_END = 0.01
+        self.EPS_DECAY = 300
         self.steps_done = 0
         self.GAMMA = 0.9
         self.BATCH_SIZE = 512
@@ -50,12 +50,13 @@ class QAgent():
         return self.network(state)
 
     def learn(self, batch, targetNet):
+        self.network.train
         non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
                                                 batch.next_state)), device=self.device, dtype=torch.bool)
         non_final_next_states = torch.cat([s for s in batch.next_state
                                            if s is not None])
         state_batch = torch.cat(batch.state)  # torch.Size([Batchsize, 8])
-        action_batch = torch.cat(batch.action)  # torch.Size([Batchsize, 8])
+        action_batch = torch.cat(batch.action)  # torch.Size([Batchsize, 4])
         reward_batch = torch.cat(batch.reward)  # torch.Size([Batchsize])
 
         # Output of DQN is reward of each action, not probability
@@ -79,7 +80,7 @@ class QAgent():
         for param in self.network.parameters():
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
-
+        self.network.eval
     def sample(self, state):
         action_prob = self.network(
             torch.FloatTensor(state).to("cuda"))

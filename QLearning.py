@@ -4,7 +4,7 @@ from util.SetSeed import *
 from util.ReplayMemory import *
 from util.SaveLandingVideo import saveLandingVideo
 from agent.QAgent import *
-#===============================================
+# ===============================================
 import gym
 import math
 import numpy as np
@@ -22,6 +22,8 @@ import torchvision.transforms as T
 
 from tqdm import tqdm
 import sys
+
+
 def main(argv):
     noDisplay = "-q" in argv
     if noDisplay:
@@ -46,42 +48,40 @@ def main(argv):
     # Get number of actions from gym action space
     state = env.reset()
     nActions = env.action_space.n
-    policyQAgent = QAgent(len(state), nActions, optim.SGD,{"lr":1e-4},device=device)
+    policyQAgent = QAgent(len(state), nActions, optim.RMSprop, {
+                          "lr": 1e-4}, device=device)
     targetNet = DQN(len(state), nActions).to(device)
     targetNet.load_state_dict(policyQAgent.network.state_dict())
     targetNet.eval()
     if "-l" in argv:
         policyQAgent.load(sourcePath + "Qmodel.ckpt")
     memory = ReplayMemory(10000)
-    #=====================================Training ============================
+    # =====================================Training ============================
     num_episodes = 10000
     progressBar = tqdm(range(num_episodes))
     for i in progressBar:
         currentState = env.reset()
         currentState = torch.tensor(currentState).view(1, 8)
-        totalReward = []
+        totalReward = 0.0
         finalReward = 0.0
         for t in count():
             action = policyQAgent.select_action(currentState)
             nextState, reward, done, _ = env.step(action.item())
-            if noDisplay:
-                pass
-            else:
+            if not noDisplay:
                 plt.imshow(env.render(mode='rgb_array'),
-                        interpolation='none')
-            nextState = torch.tensor(nextState).view(1, 8)
+                           interpolation='none')
+            nextState = torch.tensor(nextState).view(
+                1, 8) if not done else None
             reward = torch.tensor([reward], device=device)
-            if done:
-                nextState = None
             memory.push(currentState, action, nextState, reward)
             currentState = nextState
-            
-            if len(memory) >= policyQAgent.BATCH_SIZE:
-                transitions = memory.sample(policyQAgent.BATCH_SIZE)
-                batch = Transition(*zip(*transitions))
-                policyQAgent.learn(batch,targetNet)
-            
-            totalReward.append(reward.item())
+
+            transitions = memory.sample(
+                min(policyQAgent.BATCH_SIZE, len(memory)))
+            batch = Transition(*zip(*transitions))
+            policyQAgent.learn(batch, targetNet)
+
+            totalReward = totalReward*QAgent.GAMMA + (reward.item())
             if done:
                 finalReward = reward.item()
                 break
@@ -89,7 +89,7 @@ def main(argv):
             targetNet.load_state_dict(policyQAgent.network.state_dict())
         policyQAgent.save(sourcePath + "Qmodel.ckpt")
         progressBar.set_description(
-            f"Total: {sum(totalReward): 4.1f}, Final: {finalReward: 4.1f}")
+            f"Total: {totalReward: 4.1f}, Final: {finalReward: 4.1f}")
     if noDisplay:
         pass
     else:
