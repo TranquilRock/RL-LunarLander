@@ -85,6 +85,7 @@ class QAgent():
         self.network.eval
 
     def sample(self, state):
+        state = torch.tensor(state).view(1, 8)
         return (self.select_action(state=state, isTesting=True),None) # To meet format
 
     def select_action(self, state, isTesting=False):
