@@ -58,6 +58,7 @@ def main(argv):
     memory = ReplayMemory(10000)
     # =====================================Training ============================
     num_episodes = 10000
+    maxReward = 0.0
     progressBar = tqdm(range(num_episodes))
     for i in progressBar:
         currentState = env.reset()
@@ -85,12 +86,13 @@ def main(argv):
             if done:
                 finalReward = reward.item()
                 break
-        if i % TARGET_UPDATE == 0:
+        if i % TARGET_UPDATE == 0 and totalReward > 80:
             targetNet.load_state_dict(policyQAgent.network.state_dict())
         policyQAgent.save(sourcePath + "Qmodel.ckpt")
         progressBar.set_description(
             f"Total: {totalReward: 4.1f}, Final: {finalReward: 4.1f}")
-        if totalReward > 80:
+        if totalReward > maxReward:
+            maxReward = totalReward
             saveLandingVideo(sourcePath + "Train.mp4", env , policyQAgent)
     if noDisplay:
         pass
