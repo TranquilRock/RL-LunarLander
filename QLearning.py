@@ -90,6 +90,8 @@ def main(argv):
         policyQAgent.save(sourcePath + "Qmodel.ckpt")
         progressBar.set_description(
             f"Total: {totalReward: 4.1f}, Final: {finalReward: 4.1f}")
+        if totalReward > 80:
+            saveLandingVideo(sourcePath + "Train.mp4", env , policyQAgent)
     if noDisplay:
         pass
     else:

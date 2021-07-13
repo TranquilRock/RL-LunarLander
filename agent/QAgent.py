@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.distributions import Categorical
 
+
 class DQN(nn.Module):
     def __init__(self, nState, nAction, device="cuda"):
         super().__init__()
@@ -62,14 +63,15 @@ class QAgent():
         # Output of DQN is reward of each action, not probability
         state_action_values = self.network(
             state_batch).gather(1, action_batch)
-        next_state_values = torch.zeros(state_batch.shape[0], device=self.device)
+        next_state_values = torch.zeros(
+            state_batch.shape[0], device=self.device)
         next_state_values[non_final_mask] = targetNet(
             non_final_next_states).max(1)[0].detach()
-        
+
         # Compute the expected Q values
         expected_state_action_values = ((
             next_state_values * self.GAMMA) + reward_batch).float()
-        
+
         # Compute Huber loss
         criterion = nn.SmoothL1Loss()
         loss = criterion(state_action_values,
@@ -81,20 +83,16 @@ class QAgent():
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
         self.network.eval
-    def sample(self, state):
-        action_prob = self.network(
-            torch.FloatTensor(state).to("cuda"))
-        action_dist = Categorical(action_prob)
-        action = action_dist.sample()
-        log_prob = action_dist.log_prob(action)
-        return action.item(), log_prob
 
-    def select_action(self, state):
+    def sample(self, state):
+        return (self.select_action(state=state, isTesting=True),None) # To meet format
+
+    def select_action(self, state, isTesting=False):
         sample = random.random()
         eps_threshold = self.EPS_END + (self.EPS_START - self.EPS_END) * \
             math.exp(-1. * self.steps_done / self.EPS_DECAY)
         self.steps_done += 1
-        if sample > eps_threshold:
+        if sample > eps_threshold or isTesting:
             with torch.no_grad():
                 return self.network(state).max(1)[1].view(1, 1)
         else:
