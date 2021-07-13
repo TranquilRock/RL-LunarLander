@@ -46,13 +46,13 @@ def main(argv):
     # Get number of actions from gym action space
     state = env.reset()
     nActions = env.action_space.n
-    policyQAgent = QAgent(len(state), nActions, optim.RMSprop,{"lr":1e-4},device=device)
+    policyQAgent = QAgent(len(state), nActions, optim.SGD,{"lr":1e-4},device=device)
     targetNet = DQN(len(state), nActions).to(device)
     targetNet.load_state_dict(policyQAgent.network.state_dict())
     targetNet.eval()
     if "-l" in argv:
         policyQAgent.load(sourcePath + "Qmodel.ckpt")
-    memory = ReplayMemory(8763)
+    memory = ReplayMemory(10000)
     #=====================================Training ============================
     num_episodes = 10000
     progressBar = tqdm(range(num_episodes))

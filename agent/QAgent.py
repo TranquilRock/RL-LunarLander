@@ -77,7 +77,7 @@ class QAgent():
         self.optimizer.zero_grad()
         loss.backward()
         for param in self.network.parameters():
-            param.grad.data.clamp_(-10, 10)
+            param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
 
     def sample(self, state):
