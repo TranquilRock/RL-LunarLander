@@ -62,7 +62,7 @@ class QAgent():
         # Output of DQN is reward of each action, not probability
         state_action_values = self.network(
             state_batch).gather(1, action_batch)
-        next_state_values = torch.zeros(self.BATCH_SIZE, device=self.device)
+        next_state_values = torch.zeros(len(batch), device=self.device)
         next_state_values[non_final_mask] = targetNet(
             non_final_next_states).max(1)[0].detach()
         
