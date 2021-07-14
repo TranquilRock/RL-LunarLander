@@ -81,7 +81,7 @@ class QAgent():
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
         self.network.eval
-        return loss.item().detach()
+        return loss.item()
 
     def sample(self, state):
         state = torch.tensor(state).view(1, 8)
