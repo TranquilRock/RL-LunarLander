@@ -1,5 +1,6 @@
 # This code was a modification of pytorch tutorial
 # Link: https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
+from numpy.lib.function_base import average
 from util.SetSeed import *
 from util.ReplayMemory import *
 from util.SaveLandingVideo import saveLandingVideo
@@ -65,6 +66,7 @@ def main(argv):
         currentState = torch.tensor(currentState).view(1, 8)
         totalReward = 0.0
         finalReward = 0.0
+        loss = []
         for t in count():
             action = policyQAgent.select_action(currentState)
             nextState, reward, done, _ = env.step(action.item())
@@ -80,7 +82,7 @@ def main(argv):
             transitions = memory.sample(
                 min(policyQAgent.BATCH_SIZE, len(memory)))
             batch = Transition(*zip(*transitions))
-            policyQAgent.learn(batch, targetNet)
+            loss.append(policyQAgent.learn(batch, targetNet))
 
             totalReward = totalReward*policyQAgent.GAMMA + (reward.item())
             if done:
@@ -88,7 +90,7 @@ def main(argv):
                 break
         policyQAgent.save(sourcePath + "Qmodel.ckpt")
         progressBar.set_description(
-            f"Total: {totalReward: 4.1f}, Final: {finalReward: 4.1f}")
+            f"Total: {totalReward: 4.1f}, Final: {finalReward: 4.1f},Loss: {average(loss)}")
         
         if totalReward > maxReward:
             targetNet.load_state_dict(policyQAgent.network.state_dict())

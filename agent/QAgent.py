@@ -46,6 +46,7 @@ class QAgent():
         self.steps_done = 0
         self.GAMMA = 0.9
         self.BATCH_SIZE = 512
+        self.criterion = nn.SmoothL1Loss(beta=0.2)
 
     def forward(self, state):
         return self.network(state)
@@ -71,11 +72,8 @@ class QAgent():
         # Compute the expected Q values
         expected_state_action_values = ((
             next_state_values * self.GAMMA) + reward_batch).float()
-
-        # Compute Huber loss
-        criterion = nn.SmoothL1Loss()
-        loss = criterion(state_action_values,
-                         expected_state_action_values.unsqueeze(1))
+        loss = self.criterion(state_action_values,
+                              expected_state_action_values.unsqueeze(1))
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -83,6 +81,7 @@ class QAgent():
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
         self.network.eval
+        return loss.item().detach()
 
     def sample(self, state):
         state = torch.tensor(state).view(1, 8)
