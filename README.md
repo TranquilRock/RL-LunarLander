@@ -14,3 +14,6 @@ NTUEE ML2020-2021 spring course
     - 小艇每隻腳碰觸地面 +10 分
 - Example
     -  ![](https://github.com/AndyDu01/RL-LunarLander/blob/main/Train.mp4)
+    -  https://user-images.githubusercontent.com/23418421/125715306-5b67f586-1427-499a-9a67-fb475f559789.mp4
+
+
