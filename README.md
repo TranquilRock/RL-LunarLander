@@ -12,4 +12,5 @@ NTUEE ML2020-2021 spring course
     - 噴射主引擎（向下噴火）每次 -0.3 分
     - 小艇最終完全靜止則再得 100 分
     - 小艇每隻腳碰觸地面 +10 分
-![https://github.com/AndyDu01/RL-LunarLander/blob/main/Train.mp4]
+- Example
+    -  ![](https://github.com/AndyDu01/RL-LunarLander/blob/main/Train.mp4)
