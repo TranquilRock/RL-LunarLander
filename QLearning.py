@@ -56,9 +56,9 @@ def main(argv):
     targetNet.eval()
     if "-l" in argv:
         policyQAgent.load(sourcePath + "Qmodel.ckpt")
-    memory = ReplayMemory(4096)
+    memory = ReplayMemory(100000)
     # =====================================Training ============================
-    num_episodes = 10000
+    num_episodes = 30000
     maxReward = 0.0
     progressBar = tqdm(range(num_episodes))
     for i in progressBar:
@@ -96,11 +96,17 @@ def main(argv):
             targetNet.load_state_dict(policyQAgent.network.state_dict())
             maxReward = totalReward
             saveLandingVideo(sourcePath + "Train.mp4", env , policyQAgent)
-        elif i % TARGET_UPDATE == 0 and totalReward > 10:
-            targetNet.load_state_dict(policyQAgent.network.state_dict())
+        elif i % TARGET_UPDATE == 0:
+            TAU = 5e-3
+            for eval_param , param in zip(targetNet.parameters(), policyQAgent.network.parameters()):
+                eval_param.data.copy_(param.data * TAU + (1 - TAU) * eval_param.data)
+            # targetNet.load_state_dict(policyQAgent.network.state_dict())
     if noDisplay:
         pass
     else:
         env.render()
         env.close()
         plt.ioff()
+
+
+
