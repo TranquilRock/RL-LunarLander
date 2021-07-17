@@ -46,7 +46,7 @@ class QAgent():
         self.steps_done = 0
         self.GAMMA = 0.9
         self.BATCH_SIZE = 512
-        self.criterion = nn.SmoothL1Loss(beta=0.2)
+        self.criterion = nn.SmoothL1Loss(beta=0.15)
 
     def forward(self, state):
         return self.network(state)

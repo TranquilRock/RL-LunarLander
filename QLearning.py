@@ -50,7 +50,7 @@ def main(argv):
     state = env.reset()
     nActions = env.action_space.n
     policyQAgent = QAgent(len(state), nActions, optim.RMSprop, {
-                          "lr": 1e-4}, device=device)
+                          "lr": 1e-5}, device=device)
     targetNet = DQN(len(state), nActions).to(device)
     targetNet.load_state_dict(policyQAgent.network.state_dict())
     targetNet.eval()
@@ -58,7 +58,7 @@ def main(argv):
         policyQAgent.load(sourcePath + "Qmodel.ckpt")
     memory = ReplayMemory(100000)
     # =====================================Training ============================
-    num_episodes = 30000
+    num_episodes = 100000
     maxReward = 0.0
     progressBar = tqdm(range(num_episodes))
     for i in progressBar:
@@ -93,13 +93,13 @@ def main(argv):
             f"Total: {totalReward: 4.1f}, Final: {finalReward: 4.1f},Loss: {average(loss)}")
         
         if totalReward > maxReward:
-            targetNet.load_state_dict(policyQAgent.network.state_dict())
             maxReward = totalReward
             saveLandingVideo(sourcePath + "Train.mp4", env , policyQAgent)
         elif i % TARGET_UPDATE == 0:
-            TAU = 5e-3
+            tau = 5e-3
             for eval_param , param in zip(targetNet.parameters(), policyQAgent.network.parameters()):
-                eval_param.data.copy_(param.data * TAU + (1 - TAU) * eval_param.data)
+                eval_param.data.copy_(
+                    param.data * tau + (1 - tau) * eval_param.data)
             # targetNet.load_state_dict(policyQAgent.network.state_dict())
     if noDisplay:
         pass
